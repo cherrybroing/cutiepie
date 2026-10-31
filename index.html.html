@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Netflix - Diyaa & Cherry Vibe Match</title>
+
+<style>
+:root {
+    --netflix-red: #E50914;
+    --netflix-black: #141414;
+    --netflix-dark-gray: #181818;
+    --netflix-card-bg: #222222;
+    --netflix-light-gray: #2F2F2F;
+    --netflix-text-gray: #AAAAAA;
+}
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background: var(--netflix-black);
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+button, input, select {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.hidden { display: none !important; }
+
+/* ================= PROFILE SELECTION ================= */
+
+#login {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--netflix-black);
+    position: relative;
+    padding: 20px 15px;
+}
+
+.netflix-logo-top {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    height: 24px;
+}
+
+.netflix-logo-top img {
+    height: 100%;
+}
+
+.who {
+    font-size: 1.6rem;
+    font-weight: 500;
+    margin-bottom: 25px;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+.profiles {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    justify-items: center;
+    width: 100%;
+    max-width: 340px;
+}
+
+@media (min-width: 600px) {
+    .profiles {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: 800px;
+        gap: 25px;
+    }
+    .who { font-size: 2rem; }
+}
+
+.profile {
+    text-align: center;
+    cursor: pointer;
+    width: 90px;
+}
+
+.avatar {
+    width: 85px;
+    height: 85px;
+    margin: 0 auto;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    background: linear-gradient(135deg, #2a2a2a 0%, #111111 100%);
+    border: 2px solid transparent;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    overflow: hidden;
+}
+
+.profile:active .avatar, .profile:hover .avatar {
+    border-color: #E5E5E5;
+    transform: scale(1.05);
+}
+
+.profile-name {
+    margin-top: 8px;
+    color: #808080;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.profile:active .profile-name, .profile:hover .profile-name {
+    color: #E5E5E5;
+}
+
+.add .avatar {
+    font-size: 30px;
+    color: #808080;
+    background: transparent;
+    border: 2px dashed #808080;
+}
+
+.manage-btn {
+    margin-top: 35px;
+    background: transparent;
+    border: 1px solid #808080;
+    color: #808080;
+    padding: 8px 18px;
+    font-size: 0.8rem;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    border-radius: 3px;
+}
+
+/* ================= MODALS ================= */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    padding: 15px;
+}
+
+.modal-box {
+    width: 100%;
+    max-width: 340px;
+    background: rgba(20,20,20,0.95);
+    border: 1px solid #333;
+    padding: 24px 16px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+}
+
+.modal-box h2 {
+    margin: 10px 0 12px;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.modal input, .modal select {
+    width: 100%;
+    padding: 10px 12px;
+    margin: 6px 0;
+    background: #333;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.modal input:focus, .modal select:focus {
+    outline: none;
+    border-color: var(--netflix-red);
+    background: #3d3d3d;
+}
+
+.red-btn {
+    width: 100%;
+    padding: 11px;
+    border: 0;
+    border-radius: 4px;
+    background: var(--netflix-red);
+    color: white;
+    font-weight: 700;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.red-btn:active {
+    background: #b80710;
+}
+
+.cancel {
+    background: #333;
+    margin-top: 6px;
+}
+
+.cancel:active {
+    background: #444;
+}
+
+.error {
+    color: #E50914;
+    font-size: 0.78rem;
+    min-height: 18px;
+    margin-top: 4px;
+}
+
+/* ================= MAIN APP ================= */
+
+#app {
+    min-height: 100vh;
+    padding-bottom: 65px;
+    background: var(--netflix-black);
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 100%);
+    backdrop-filter: blur(4px);
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-left img {
+    height: 22px;
+    cursor: pointer;
+}
+
+.nav-links {
+    display: none;
+    gap: 15px;
+    list-style: none;
+}
+
+.nav-links li button {
+    background: transparent;
+    border: 0;
+    color: #e5e5e5;
+    font-size: 0.85rem;
+}
+
+.nav-links li button.active {
+    color: #fff;
+    font-weight: 700;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.small-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    overflow: hidden;
+}
+
+/* MOBILE BOTTOM NAVIGATION BAR */
+.mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: #121212;
+    border-top: 1px solid #252525;
+    display: flex;
+    justify-space: space-around;
+    align-items: center;
+    z-index: 2000;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-item-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.65rem;
+    gap: 2px;
+    width: 25%;
+}
+
+.nav-item-btn .icon { font-size: 1.1rem; }
+.nav-item-btn.active { color: #fff; }
+
+@media (min-width: 768px) {
+    .nav-links { display: flex; }
+    .mobile-bottom-nav { display: none; }
+    #app { padding-bottom: 0; }
+    .navbar { height: 60px; padding: 0 4%; }
+    .nav-left img { height: 28px; }
+}
+
+/* ================= HERO BANNER SLIDER (7s) ================= */
+
+.hero-banner {
+    position: relative;
+    min-height: 55vh;
+    background-size: cover;
+    background-position: center;
+    transition: background-image 0.8s ease-in-out;
+    background: linear-gradient(180deg, rgba(20,20,20,0.2) 0%, rgba(20,20,20,0.9) 85%, var(--netflix-black) 100%),
+                url('https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=800&q=80') center/cover no-repeat;
+    display: flex;
+    align-items: flex-end;
+    padding: 60px 14px 20px;
+}
+
+.hero-content {
+    max-width: 500px;
+    z-index: 10;
+    width: 100%;
+    animation: fadeInHero 0.6s ease;
+}
+
+@keyframes fadeInHero {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-badge {
+    color: var(--netflix-red);
+    font-weight: 800;
+    letter-spacing: 2px;
+    font-size: 0.68rem;
+    margin-bottom: 4px;
+}
+
+.hero-title {
+    font-size: 1.7rem;
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
+}
+
+.hero-title span { color: var(--netflix-red); }
+
+.hero-desc {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: #E5E5E5;
+    margin-bottom: 15px;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.9);
+}
+
+.hero-buttons { display: flex; gap: 8px; }
+
+.hero-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 9px 14px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: 0;
+    flex: 1;
+    max-width: 160px;
+}
+
+.play-btn { background: #FFFFFF; color: #000; }
+.info-btn { background: rgba(109, 109, 110, 0.7); color: #FFF; }
+
+.hero-dots {
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    display: flex;
+    gap: 5px;
+    z-index: 12;
+}
+
+.hero-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    transition: background 0.3s;
+}
+
+.hero-dot.active {
+    background: var(--netflix-red);
+    width: 18px;
+    border-radius: 4px;
+}
+
+/* ================= CAROUSEL / ROWS & CARDS ================= */
+
+.row {
+    padding: 0 12px;
+    margin-bottom: 22px;
+}
+
+.row-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #E5E5E5;
+    margin-bottom: 10px;
+}
+
+.row-cards {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.row-cards::-webkit-scrollbar { display: none; }
+
+.card {
+    flex: 0 0 135px;
+    height: 185px;
+    background: var(--netflix-card-bg);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    scroll-snap-align: start;
+    border: 1px solid #2a2a2a;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    transition: transform 0.2s;
+}
+
+.card:active { transform: scale(0.97); }
+
+.card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+}
+
+.card-overlay {
+    position: relative;
+    z-index: 2;
+    padding: 8px;
+    background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 70%, transparent 100%);
+    width: 100%;
+}
+
+.card h3 {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #FFF;
+    line-height: 1.1;
+}
+
+.card p {
+    font-size: 0.65rem;
+    color: var(--netflix-text-gray);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-tag {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 3;
+    background: var(--netflix-red);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 2px 5px;
+    border-radius: 2px;
+}
+
+@media (min-width: 768px) {
+    .row { padding: 0 4%; }
+    .card { flex: 0 0 200px; height: 260px; }
+    .card h3 { font-size: 0.95rem; }
+    .card p { font-size: 0.75rem; }
+    .hero-title { font-size: 2.2rem; }
+    .hero-banner { min-height: 65vh; padding: 80px 16px 30px; }
+}
+
+/* ================= DYNAMIC PAGES ================= */
+
+.page-container {
+    padding: 60px 14px 30px;
+    min-height: 80vh;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.page-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.page-subtitle {
+    color: var(--netflix-text-gray);
+    margin-bottom: 16px;
+    font-size: 0.8rem;
+}
+
+.netflix-box {
+    background: var(--netflix-dark-gray);
+    border: 1px solid #282828;
+    padding: 14px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+/* ================= PODCAST ================= */
+
+.podcast-selector {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.podcast-tab {
+    flex: 0 0 auto;
+    background: #222;
+    border: 1px solid #333;
+    color: #ccc;
+    padding: 7px 12px;
+    border-radius: 18px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.podcast-tab.active {
+    background: var(--netflix-red);
+    border-color: var(--netflix-red);
+    color: #fff;
+}
+
+.podcast-stage {
+    background: #181818;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 15px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.podcast-speaker {
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.3);
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.podcast-speaker.talking {
+    border-left-color: var(--netflix-red);
+    background: rgba(229, 9, 20, 0.12);
+}
+
+.speaker-name {
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #E50914;
+    margin-bottom: 3px;
+}
+
+.speaker-bubble {
+    color: #DDD;
+    font-size: 0.82rem;
+    line-height: 1.4;
+}
+
+.podcast-controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+/* ================= QUIZ ENGINE ================= */
+
+.quiz-container {
+    background: var(--netflix-dark-gray);
+    border: 1px solid #2d2d2d;
+    padding: 16px 14px;
+    border-radius: 8px;
+    margin-top: 5px;
+}
+
+.quiz-progress-bg {
+    height: 5px;
+    background: #333;
+    border-radius: 3px;
+    margin: 12px 0;
+    overflow: hidden;
+}
+
+.quiz-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--netflix-red);
+    transition: width 0.3s ease;
+}
+
+.quiz-question {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 1.35;
+}
+
+.quiz-answers-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.quiz-btn {
+    background: #222;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 12px;
+    color: white;
+    font-size: 0.85rem;
+    text-align: left;
+    transition: background 0.15s;
+}
+
+.quiz-btn:active {
+    background: var(--netflix-red);
+    border-color: var(--netflix-red);
+}
+
+/* ================= RESULT CARD ================= */
+
+.result-card {
+    text-align: center;
+    background: var(--netflix-dark-gray);
+    border: 1px solid #333;
+    padding: 20px 14px;
+    border-radius: 8px;
+}
+
+.result-score {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--netflix-red);
+    line-height: 1;
+    margin: 8px 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin: 16px 0;
+}
+
+.stat-box {
+    background: #222;
+    padding: 8px 4px;
+    border-radius: 4px;
+    border: 1px solid #333;
+}
+
+.stat-box span { font-size: 0.6rem; color: var(--netflix-text-gray); display: block; }
+.stat-box strong { font-size: 0.88rem; color: #FFF; margin-top: 2px; display: block; }
+
+.secret-card {
+    background: linear-gradient(135deg, #1f0506 0%, #111111 100%);
+    border: 1px solid var(--netflix-red);
+    padding: 18px 12px;
+    border-radius: 8px;
+    margin-top: 15px;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= PROFILE LOCK SCREEN ================= -->
+
+<section id="login">
+    <div class="netflix-logo-top">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix Logo">
+    </div>
+
+    <h1 class="who">Who's watching?</h1>
+
+    <div class="profiles" id="profiles"></div>
+
+    <button class="manage-btn">Manage Profiles</button>
+</section>
+
+
+<!-- ================= LOGIN MODAL ================= -->
+
+<div id="loginModal" class="modal hidden">
+    <div class="modal-box">
+        <div id="modalAvatar" style="width:50px; height:50px; margin:0 auto; font-size:36px;">🌸</div>
+        <h2 id="modalTitle">Profile Lock</h2>
+        <input id="loginPassword" type="password" placeholder="Enter PIN / Password">
+        <div id="loginError" class="error"></div>
+        <button class="red-btn" onclick="loginProfile()">Continue</button>
+        <button class="red-btn cancel" onclick="closeModal()">Cancel</button>
+    </div>
+</div>
+
+
+<!-- ================= ADD PROFILE MODAL ================= -->
+
+<div id="addModal" class="modal hidden">
+    <div class="modal-box">
+        <h2>Add Profile</h2>
+        <input id="newName" placeholder="Name">
+        <input id="newPassword" type="password" placeholder="Password PIN">
+        <input id="newAvatar" placeholder="Avatar Symbol (e.g. ✨)" value="✨">
+        <input id="newLiked" placeholder="Who do they like?">
+        <button class="red-btn" onclick="createProfile()">Save Profile</button>
+        <button class="red-btn cancel" onclick="closeAddModal()">Cancel</button>
+    </div>
+</div>
+
+
+<!-- ================= MAIN APP ================= -->
+
+<section id="app" class="hidden">
+
+    <header class="navbar" id="navbar">
+        <div class="nav-left">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix" onclick="home()">
+            <ul class="nav-links">
+                <li><button onclick="home()" class="active" id="navHome">Home</button></li>
+                <li><button onclick="podcasts()" id="navPodcasts">Podcasts 🎙</button></li>
+                <li><button onclick="jokes()" id="navJokes">Jokes</button></li>
+                <li><button onclick="games()" id="navGames">Games</button></li>
+            </ul>
+        </div>
+
+        <div class="nav-right">
+            <button onclick="upgrade()" style="background:var(--netflix-red); border:0; color:white; padding:5px 10px; border-radius:3px; font-weight:bold; font-size:0.75rem;">Upgrade</button>
+            <div class="profile-dropdown" onclick="account()">
+                <div id="smallAvatar" class="small-avatar">🌸</div>
+                <span id="currentName" style="font-size:0.8rem; font-weight:500; display:none;">Profile</span>
+            </div>
+        </div>
+    </header>
+
+    <nav class="mobile-bottom-nav">
+        <button class="nav-item-btn active" onclick="home()" id="mNavHome">
+            <span class="icon">🏠</span>
+            <span>Home</span>
+        </button>
+        <button class="nav-item-btn" onclick="podcasts()" id="mNavPodcasts">
+            <span class="icon">🎙</span>
+            <span>Podcasts</span>
+        </button>
+        <button class="nav-item-btn" onclick="games()" id="mNavGames">
+            <span class="icon">🎮</span>
+            <span>Games</span>
+        </button>
+        <button class="nav-item-btn" onclick="account()" id="mNavAccount">
+            <span class="icon">👤</span>
+            <span>Account</span>
+        </button>
+    </nav>
+
+    <main id="homePage">
+
+        <div class="hero-banner" id="heroBanner">
+            <div class="hero-content" id="heroContent"></div>
+            <div class="hero-dots" id="heroDots">
+                <span class="hero-dot active"></span>
+                <span class="hero-dot"></span>
+                <span class="hero-dot"></span>
+                <span class="hero-dot"></span>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 15px;">
+            <h2 class="row-title">💌 Our Vibe & Love Vault</h2>
+            <div class="netflix-box" style="border-left: 3px solid var(--netflix-red);">
+                <h3 style="font-size:0.95rem; color:#FFF; margin-bottom:4px;">Diyaa & Cherry’s Infinite Vibe Connection ✨</h3>
+                <p style="color:var(--netflix-text-gray); font-size:0.8rem; line-height:1.4;">
+                    Built with late-night coding, custom websites, endless teasing, and pure love. You're my favorite notification and my favorite person. ❤️
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <h2 class="row-title">🔥 Trending Interactive Quizzes</h2>
+            <div class="row-cards">
+
+                <div class="card" onclick="startQuiz('loveCherry')">
+                    <span class="card-tag">NEW ❤️</span>
+                    <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=400&q=80" alt="How Much Cherry Loves Diyaa">
+                    <div class="card-overlay">
+                        <h3>How Much Cherry Loves Diyaa</h3>
+                        <p>Infinite romance score check</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="startQuiz('aboutMe')">
+                    <span class="card-tag">SECRET</span>
+                    <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=400&q=80" alt="About Me">
+                    <div class="card-overlay">
+                        <h3>Do You Know Me?</h3>
+                        <p>Hard questions about Cherry</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="startQuiz('compatibility')">
+                    <span class="card-tag">TOP 1</span>
+                    <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=400&q=80" alt="Compatibility">
+                    <div class="card-overlay">
+                        <h3>Compatibility</h3>
+                        <p>Find your vibe match score</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="startQuiz('cars')">
+                    <span class="card-tag">HOT</span>
+                    <img src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=400&q=80" alt="Cars">
+                    <div class="card-overlay">
+                        <h3>Car Crush Match</h3>
+                        <p>Match your dream ride</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="startQuiz('movieGenre')">
+                    <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=400&q=80" alt="Movie">
+                    <div class="card-overlay">
+                        <h3>Movie Vibe</h3>
+                        <p>What should you watch tonight?</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <h2 class="row-title">🎵 Music & Vibe Mixes</h2>
+            <div class="row-cards">
+
+                <div class="card" onclick="startQuiz('musicGenre')">
+                    <span class="card-tag">POPular</span>
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80" alt="Music">
+                    <div class="card-overlay">
+                        <h3>Music Aura</h3>
+                        <p>Find your soundtrack</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="startQuiz('lateNight')">
+                    <span class="card-tag">CHILL</span>
+                    <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=400&q=80" alt="Night Vibe">
+                    <div class="card-overlay">
+                        <h3>2 AM Thoughts</h3>
+                        <p>Late night mood test</p>
+                    </div>
+                </div>
+
+                <div class="card" onclick="startQuiz('petVibe')">
+                    <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80" alt="Pet Vibe">
+                    <div class="card-overlay">
+                        <h3>Spirit Animal</h3>
+                        <p>Which pet fits your vibe?</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <div id="dynamicPage" class="hidden"></div>
+
+</section>
+
+
+<script>
+
+/* =========================================================
+   PROFILES & STATE STORAGE
+========================================================= */
+
+const defaultProfiles = {
+    diyaa: { name: "Diyaa Cutie", password: "cherryhandsomeand", avatar: "🌸", liked: "Cherryyy" },
+    cherry: { name: "Cherryyy", password: "diyaacutie", avatar: "😎", liked: "Diyaa Cutie" }
+};
+
+let profiles = JSON.parse(localStorage.getItem("diyaaProfiles_v10")) || defaultProfiles;
+let activeProfile = null;
+let history = JSON.parse(localStorage.getItem("diyaaHistory_v10")) || [];
+let userFavorites = JSON.parse(localStorage.getItem("diyaaFavorites_v10")) || [];
+
+/* =========================================================
+   HERO BANNER SLIDER
+========================================================= */
+
+const heroSlides = [
+    {
+        badge: "N SERIES • EXCLUSIVE ROMANCE",
+        title: "HOW MUCH CHERRY<br><span>LOVES DIYAA.</span>",
+        desc: "Take our brand new romantic quiz, secret tests, custom podcasts, and fun games!",
+        bg: "url('https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=800&q=80')",
+        actionText: "▶ Play Love Quiz",
+        actionQuiz: "loveCherry"
+    },
+    {
+        badge: "SECRET SPECIAL • DIYAA'S VAULT",
+        title: "DO YOU KNOW<br><span>CHERRY WELL?</span>",
+        desc: "Unlock tricky questions about his favorite cars, coding habits, and a secret snap reveal!",
+        bg: "url('https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=800&q=80')",
+        actionText: "▶ Play Secret Quiz",
+        actionQuiz: "aboutMe"
+    },
+    {
+        badge: "SYNERGY • 100% MATCH",
+        title: "INFINITE<br><span>VIBE SYNERGY.</span>",
+        desc: "Test your relationship compatibility score and see how high your love and humor match goes!",
+        bg: "url('https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=800&q=80')",
+        actionText: "▶ Compatibility",
+        actionQuiz: "compatibility"
+    },
+    {
+        badge: "LATE NIGHT PODCASTS",
+        title: "ABSOLUTE<br><span>NONSENSE & BANTER.</span>",
+        desc: "Listen to Cherry & Diyaa argue whether ketchup is a fruit smoothie or if cereal is cold soup!",
+        bg: "url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80')",
+        actionText: "🎙️ Podcasts",
+        actionPodcast: true
+    }
+];
+
+let currentSlideIndex = 0;
+let slideInterval = null;
+
+function initHeroSlider() {
+    renderSlide(0);
+    clearInterval(slideInterval);
+    slideInterval = setInterval(() => {
+        currentSlideIndex = (currentSlideIndex + 1) % heroSlides.length;
+        renderSlide(currentSlideIndex);
+    }, 7000);
+}
+
+function renderSlide(index) {
+    const banner = document.getElementById("heroBanner");
+    const content = document.getElementById("heroContent");
+    const dotsBox = document.getElementById("heroDots");
+    if(!banner || !content || !dotsBox) return;
+
+    const s = heroSlides[index];
+    banner.style.backgroundImage = `linear-gradient(180deg, rgba(20,20,20,0.2) 0%, rgba(20,20,20,0.9) 85%, var(--netflix-black) 100%), ${s.bg}`;
+    
+    content.innerHTML = `
+        <div class="hero-badge">${s.badge}</div>
+        <h1 class="hero-title">${s.title}</h1>
+        <p class="hero-desc">${s.desc}</p>
+        <div class="hero-buttons">
+            <button class="hero-btn play-btn" onclick="${s.actionPodcast ? 'podcasts()' : `startQuiz('${s.actionQuiz}')`}">${s.actionText}</button>
+            <button class="hero-btn info-btn" onclick="podcasts()">🎙 Podcasts</button>
+        </div>
+    `;
+
+    dotsBox.innerHTML = heroSlides.map((_, i) => `
+        <span class="hero-dot ${i === index ? 'active' : ''}"></span>
+    `).join('');
+}
+
+/* =========================================================
+   QUIZ DATA WITH EXPANDED QUESTIONS & STRICT LOCK ON QUESTION 2
+========================================================= */
+
+const quizData = {
+    loveCherry: {
+        title: "How Much Cherry Loves Diyaa",
+        questions: [
+            { text: "How much does Cherry love Diyaa?", answers: ["Infinity and beyond 💕", "More than anything in the universe ✨", "100000% forever ❤", "All of the above combined 🥰"] },
+            { text: "What is Cherry's favorite notification on his phone?", answers: ["A 4+ message from Diyaa Cutie 🌸", "Simply sending photos(making him go crazyy) 📱", "Her sweet voice messagee 🎶", "Anything sent by Diyaa ❤️"] },
+            { text: "How long will Cherry care for and cherish Diyaa?", answers: ["Forever and always ♾️", "Through every single day 🌅", "Always by her side 🫂", "Past infinity 💖"] },
+            { text: "What does Cherry call Diyaa in his heart?", answers: ["His absolute Jaanuu 🌸", "His favorite person ✨", "His cutest partner 🥰", "His everything 💕"] }
+        ]
+    },
+    aboutMe:{
+        title: "Do You Know Cherry?",
+        questions: [
+            { text: "What is my absolute favorite car model of all time?", answers: ["Twin-turbo V8 Monster 🏎️", "Sleek Matte Black Luxury SUV 🖤", "Vintage 1969 Muscle Car 🚗", "Custom Aerodynamic Supercar ⚡"] },
+            { 
+                text: "What keeps me awake coding or building things until 3 AM?", 
+                answers: ["Talking to my jaanuu 📱", "Microcontroller C++ code 💻", "Three.js 3D Web animations ✨", "Meta Ad campaigns & strategy 📈"],
+                strictIndex: 0 // Only index 0 ("Talking to my jaanuu") is correct!
+            },
+            { text: "What is my ultimate go-to comfort vibe?", answers: ["Lofi beats & silent coding rooms 🎧", "Late-night drives with no map 🚘", "Building foam RC airplanes ✈️", "Constant playful banter with Diyaa 😜"] },
+            { text: "Who is my favorite person in the whole world?", answers: ["Diyaa Cutie ❤", "Obviously Diyaa 🌸", "100% Diyaa 💕", "Without a doubt, Diyaa ✨"] },
+            { text: "What's my secret superpower when working on projects?", answers: ["Drinking infinite coffee ☕", "Thinking about Diyaa while coding 💡", "Staying stubborn until it works 🚀", "Listening to background music 🎧"] }
+        ]
+    },
+    compatibility:{
+        title: "Compatibility Match",
+        questions: [
+            { text: "Pick your ideal weekend vibe with them:", answers: ["Cozy Movie Night 🍿", "Late Night Drive 🚗", "Street Food Tour 🍕", "Random Adventure 🌄"] },
+            { text: "What's the biggest green flag for you?", answers: ["Makes Me Laugh 😂", "Deep Conversations 💬", "100% Loyalty & Trust ❤", "Remembers Small Details 🧠"] },
+            { text: "Pick an outfit style you love on your partner:", answers: ["Clean & Classy 👔", "Streetwear Oversized 🧢", "Casual Hoodies 🧥", "Aesthetic Black 🖤"] },
+            { text: "How do you handle disagreement or small fights?", answers: ["Talk it out immediately 🗣️", "Give each other space then hug 🫂", "Send a funny meme to break ice 📱", "Cuddle and forget it 💖"] },
+            { text: "What's your favorite late-night snack pairing?", answers: ["Pizza & Soda 🍕", "French Fries & Dips 🍟", "Chocolate & Ice Cream 🍨", "Instant Noodles 🍜"] }
+        ]
+    },
+    petVibe:{
+        title: "Spirit Animal Check",
+        questions: [
+            { text: "Pick your core energy level:", answers: ["Loyal & Loving 🐶 Dog Vibe (Because you love dogs!)", "Wise & Mysterious 🦉 Owl Spirit", "Wild & Fast 🦊 Fox Energy", "Independent & Cozy 🐱 Cat Energy"] },
+            { text: "Where do you feel most at home?", answers: ["Cozy warm blanket fort 🛌", "Open park / green nature 🌿", "High view overlooking city 🏙️", "Quiet library corner 📚"] },
+            { text: "How do you show affection?", answers: ["Quality time & quiet presence 🤍", "Constant hugs & physical warmth 🫂", "Surprising them with gifts 🎁", "Playful teasing & banter 😉"] }
+        ]
+    },
+    cars:{
+        title: "Car Crush Match",
+        questions: [
+            { text: "Select your dream car aesthetic:", answers: ["Supercar Speed 🏎️", "Matte Black SUV 🚘", "Classic Vintage 🚗", "Futuristic Electric ⚡"] },
+            { text: "Where are you driving first?", answers: ["Coastal Highway Sunset 🌅", "Neon City Streets 🌃", "Winding Mountain Passes 🏔", "Endless Highway 🌵"] },
+            { text: "What playlist is playing?", answers: ["Synthwave 80s 🌌", "Hip Hop Bass 🎧", "Chill Acoustic 🎸", "High Energy EDM ⚡"] }
+        ]
+    },
+    movieGenre:{
+        title: "Movie Night Vibe",
+        questions: [
+            { text: "Pick your go-to genre for tonight:", answers: ["Edge-of-your-seat Thriller 🔪", "Mind-Bending Sci-Fi 🚀", "Comfort Romantic Comedy 🍿", "Action Blockbuster 💥"] },
+            { text: "Essential movie snack?", answers: ["Butter Popcorn 🍿", "Nachos & Cheese 🧀", "Chocolate Bars 🍫", "Soda & Chips 🥤"] }
+        ]
+    },
+    fashion:{ 
+        title: "Fashion & Style Vibe", 
+        questions: [
+            { text: "Pick daily wardrobe:", answers: ["Minimalist Beige 🌾", "All Black Everything 🖤", "Vintage & Retro 🎸", "Bold Streetwear 🎨"] },
+            { text: "Favorite accessory?", answers: ["Sleek Watch ⌚", "Oversized Hoodie 🧥", "Cool Sunglasses 🕶️", "Cap / Beanie 🧢"] }
+        ] 
+    },
+    musicGenre:{ 
+        title: "Music Aura Test", 
+        questions: [
+            { text: "What's playing on headphones?", answers: ["Lo-Fi Beats 🎧", "Upbeat Pop Hits 🎤", "Heavy Bass Rap 🎶", "Indie Rock 🎸"] },
+            { text: "When do you listen to music?", answers: ["While studying 📖", "During late drives 🌃", "At workouts 🏋️", "24/7 constantly 🔊"] }
+        ] 
+    },
+    lateNight:{ 
+        title: "2 AM Thought Match", 
+        questions: [
+            { text: "What are you doing at 2 AM?", answers: ["Scrolling reels 📱", "Overthinking abt him 🤔", "Missing him 🎶", "Midnight snacking 🍫"] },
+            { text: "Ideal late night vibe?", answers: ["Dim room lights 🌙", "Balcony breeze ☕", "Gaming till sunrise 🎮", "Deep midnight talks 🗣️"] }
+        ] 
+    }
+};
+
+let quizState = null;
+
+/* =========================================================
+   PODCAST ENGINE
+========================================================= */
+
+const episodes = [
+    {
+        title: "Episode 1 — Absolute Literate Nonsense",
+        host1: "Cherry",
+        host2: "Dia	",
+        dialogue: [
+            { speaker: 0, text: "Bro, hear me out. Scientifically speaking, if a tomato is technically a fruit, then ketchup is 100% a smoothie." },
+            { speaker: 1, text: "Stop right there! That is literally literate nonsense, Cherry! You cannot serve ketchup at a smoothie bar!" },
+            { speaker: 0, text: "Why not?! It’s blended fruit, sugar, and spices. It fits the exact dictionary definition!" },
+            { speaker: 1, text: "Okay fine, smarty pants! So if I buy cereal, am I eating cold soup with wheat croutons?!" },
+            { speaker: 0, text: "Honestly? Yes! Milk is just grain broth. The logic is completely airtight." },
+            { speaker: 1, text: "I cannot with you today 😭! Somebody please revoke his podcaster privileges!" },
+            { speaker: 0, text: "Wait, so does that mean hot dogs are technically tacos or sandwiches?!" },
+            { speaker: 1, text: "I am literally hanging up this podcast if you say another word!" },
+            { speaker: 0, text: "Fine fine! But you know I'm right though 😉." }
+        ]
+    },
+    {
+        title: "Episode 2 — The High-Octane Mindset",
+        host1: "Raj Shamani",
+        host2: "Ravi Kishan",
+        dialogue: [
+            { speaker: 0, text: "Welcome back! People ask me how to achieve massive success... what is the real secret mindset?" },
+            { speaker: 1, text: "Listen Raj! When you want something in life, you don't overthink, you don't wait for luck..." },
+            { speaker: 0, text: "Right, right, mindset and discipline are so key..." },
+            { speaker: 1, text: "YOU HAVE TO DO ITT!! ARE YOU STANDING FOR ELECTION!!?? HMMMMMMMMMMMMM" },
+            { speaker: 0, text: "*Visibly startled* Wow... that... that raw intensity is unmatched!" },
+            { speaker: 1, text: "Discipline means no excuses! wake up at 4 AM and win the day!" },
+            { speaker: 0, text: "That energy is pure gold. Taking notes right now!" }
+        ]
+    },
+    {
+        title: "Episode 3 — Late Night Confessions",
+        host1: "Cherry",
+        host2: "Chotu",
+        dialogue: [
+            { speaker: 0, text: "Do you ever sit back at 2 AM and wonder what we'd be doing if we met 5 years earlier?" },
+            { speaker: 1, text: "Probably arguing about the exact same silly things we argue about right now, honestly." },
+            { speaker: 0, text: "Hey! I am very mature when I want to be." },
+            { speaker: 1, text: "You literally tried to prove ketchup is a fruit smoothie five minutes ago!" },
+            { speaker: 0, text: "That was an intellectual discussion and I stand by it 😤." },
+            { speaker: 1, text: "Sure, let's call it 'intellectual' if that helps you sleep at night." },
+            { speaker: 0, text: "Hey, at least I keep things interesting around here!" },
+            { speaker: 1, text: "That you definitely do ❤️." }
+        ]
+    }
+];
+
+let episodeIndex = 0;
+let dialogueIndex = 0;
+let podcastPlaying = false;
+let podcastTimer = null;
+let podcastSpeed = 3200;
+
+/* =========================================================
+   SYSTEM CORE FUNCTIONS
+========================================================= */
+
+function save(){
+    localStorage.setItem("diyaaProfiles_v10", JSON.stringify(profiles));
+    localStorage.setItem("diyaaHistory_v10", JSON.stringify(history));
+    localStorage.setItem("diyaaFavorites_v10", JSON.stringify(userFavorites));
+}
+
+function escapeHTML(str){
+    return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+
+function renderProfiles(){
+    const box = document.getElementById("profiles");
+    box.innerHTML = "";
+
+    Object.keys(profiles).forEach(id => {
+        const p = profiles[id];
+        const el = document.createElement("div");
+        el.className = "profile";
+        el.innerHTML = `
+            <div class="avatar">${escapeHTML(p.avatar)}</div>
+            <div class="profile-name">${escapeHTML(p.name)}</div>
+        `;
+        el.onclick = () => openLogin(id);
+        box.appendChild(el);
+    });
+
+    const add = document.createElement("div");
+    add.className = "profile add";
+    add.innerHTML = `<div class="avatar">+</div><div class="profile-name">Add Profile</div>`;
+    add.onclick = () => document.getElementById("addModal").classList.remove("hidden");
+    box.appendChild(add);
+}
+
+function openLogin(id){
+    activeProfile = id;
+    const p = profiles[id];
+    document.getElementById("modalAvatar").innerText = p.avatar;
+    document.getElementById("modalTitle").innerText = p.name;
+    document.getElementById("loginPassword").value = "";
+    document.getElementById("loginError").innerText = "";
+    document.getElementById("loginModal").classList.remove("hidden");
+}
+
+function loginProfile(){
+    const entered = document.getElementById("loginPassword").value;
+    if(entered === profiles[activeProfile].password){
+        document.getElementById("loginModal").classList.add("hidden");
+        launchApp();
+    } else {
+        document.getElementById("loginError").innerText = "Incorrect PIN, try again cutie 😉";
+    }
+}
+
+function closeModal(){ document.getElementById("loginModal").classList.add("hidden"); }
+
+function createProfile(){
+    const name = document.getElementById("newName").value.trim();
+    const password = document.getElementById("newPassword").value;
+    const avatar = document.getElementById("newAvatar").value || "✨";
+    const liked = document.getElementById("newLiked").value.trim();
+
+    if(!name || !password){ alert("Name and password PIN are required."); return; }
+    const id = "profile_" + Date.now();
+    profiles[id] = { name, password, avatar, liked };
+    save();
+    closeAddModal();
+    renderProfiles();
+}
+
+function closeAddModal(){ document.getElementById("addModal").classList.add("hidden"); }
+
+function launchApp(){
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    document.getElementById("currentName").innerText = profiles[activeProfile].name;
+    document.getElementById("smallAvatar").innerText = profiles[activeProfile].avatar;
+    home();
+}
+
+function page(html){
+    clearInterval(slideInterval);
+    document.getElementById("homePage").classList.add("hidden");
+    const d = document.getElementById("dynamicPage");
+    d.classList.remove("hidden");
+    d.innerHTML = html;
+    window.scrollTo(0,0);
+}
+
+function setActiveNav(id, mId){
+    document.querySelectorAll(".nav-links button").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".mobile-bottom-nav button").forEach(b => b.classList.remove("active"));
+    if(id) document.getElementById(id)?.classList.add("active");
+    if(mId) document.getElementById(mId)?.classList.add("active");
+}
+
+function home(){
+    document.getElementById("dynamicPage").classList.add("hidden");
+    document.getElementById("homePage").classList.remove("hidden");
+    setActiveNav("navHome", "mNavHome");
+    initHeroSlider();
+    window.scrollTo(0,0);
+}
+
+/* =========================================================
+   PAGES
+========================================================= */
+
+function podcasts(){
+    setActiveNav("navPodcasts", "mNavPodcasts");
+    page(`
+        <div class="page-container">
+            <h1 class="page-title">🎙️ Netflix Podcasts</h1>
+            <p class="page-subtitle">Conversations, humor & banter</p>
+
+            <div class="podcast-selector">
+                ${episodes.map((e,i) => `
+                    <button onclick="episode(${i})" id="epTab${i}" class="podcast-tab ${i===episodeIndex?'active':''}">
+                        ${e.host1} & ${e.host2}
+                    </button>
+                `).join('')}
+            </div>
+
+            <h2 id="episodeTitle" style="margin-bottom:12px; font-size:1rem; color:#FFF;">${episodes[episodeIndex].title}</h2>
+
+            <div class="podcast-stage">
+                <div class="podcast-speaker" id="host0">
+                    <div class="speaker-name" id="name0">${episodes[episodeIndex].host1}</div>
+                    <div class="speaker-bubble" id="speech0">${episodes[episodeIndex].dialogue[0].text}</div>
+                </div>
+
+                <div class="podcast-speaker" id="host1">
+                    <div class="speaker-name" id="name1">${episodes[episodeIndex].host2}</div>
+                    <div class="speaker-bubble" id="speech1">...</div>
+                </div>
+            </div>
+
+            <div class="podcast-controls">
+                <button class="red-btn" style="width:auto; padding:8px 16px; font-size:0.85rem;" onclick="togglePodcast()" id="podcastButton">▶ Play</button>
+                <button class="red-btn cancel" style="width:auto; padding:8px 16px; font-size:0.85rem;" onclick="stopPodcast()">⏹ Stop</button>
+                <button class="red-btn cancel" style="width:auto; padding:8px 12px; font-size:0.75rem;" onclick="changeSpeed()">⚡ Speed: <span id="speedLabel">1x</span></button>
+            </div>
+        </div>
+    `);
+    episode(episodeIndex);
+}
+
+function episode(i){
+    episodeIndex = i;
+    dialogueIndex = 0;
+    stopPodcast();
+
+    const ep = episodes[i];
+    document.querySelectorAll(".podcast-tab").forEach((b, idx) => {
+        if(idx === i) b.classList.add("active");
+        else b.classList.remove("active");
+    });
+
+    document.getElementById("episodeTitle").innerText = ep.title;
+    document.getElementById("name0").innerText = ep.host1;
+    document.getElementById("speech0").innerText = ep.dialogue[0].text;
+    document.getElementById("name1").innerText = ep.host2;
+    document.getElementById("speech1").innerText = "...";
+}
+
+function togglePodcast(){
+    podcastPlaying = !podcastPlaying;
+    if(podcastPlaying){
+        document.getElementById("podcastButton").innerText = "⏸ Pause";
+        runPodcast();
+    } else {
+        pausePodcast();
+    }
+}
+
+function runPodcast(){
+    clearInterval(podcastTimer);
+    renderCurrentLine();
+    podcastTimer = setInterval(() => {
+        dialogueIndex++;
+        if(dialogueIndex >= episodes[episodeIndex].dialogue.length){
+            dialogueIndex = 0;
+        }
+        renderCurrentLine();
+    }, podcastSpeed);
+}
+
+function changeSpeed(){
+    if(podcastSpeed === 3200){
+        podcastSpeed = 1800;
+        document.getElementById("speedLabel").innerText = "1.75x";
+    } else {
+        podcastSpeed = 3200;
+        document.getElementById("speedLabel").innerText = "1x";
+    }
+    if(podcastPlaying) runPodcast();
+}
+
+function renderCurrentLine(){
+    const ep = episodes[episodeIndex];
+    const current = ep.dialogue[dialogueIndex];
+
+    const h0 = document.getElementById("host0");
+    const h1 = document.getElementById("host1");
+    if(!h0 || !h1) return;
+
+    h0.classList.remove("talking");
+    h1.classList.remove("talking");
+
+    if(current.speaker === 0){
+        h0.classList.add("talking");
+        document.getElementById("speech0").innerText = current.text;
+    } else {
+        h1.classList.add("talking");
+        document.getElementById("speech1").innerText = current.text;
+    }
+}
+
+function pausePodcast(){
+    clearInterval(podcastTimer);
+    if(document.getElementById("podcastButton")) document.getElementById("podcastButton").innerText = "▶ Play";
+    document.getElementById("host0")?.classList.remove("talking");
+    document.getElementById("host1")?.classList.remove("talking");
+}
+
+function stopPodcast(){
+    podcastPlaying = false;
+    clearInterval(podcastTimer);
+    dialogueIndex = 0;
+    if(document.getElementById("podcastButton")) document.getElementById("podcastButton").innerText = "▶ Play";
+    document.getElementById("host0")?.classList.remove("talking");
+    document.getElementById("host1")?.classList.remove("talking");
+}
+
+function jokes(){
+    setActiveNav("navJokes");
+    page(`
+        <div class="page-container">
+            <h1 class="page-title">😂 Comedy & Jokes</h1>
+            <div class="netflix-box">Why did the phone go to school?<br><b style="color:var(--netflix-red)">To get a better connection! 📱</b></div>
+            <div class="netflix-box">Why don't scientists trust atoms?<br><b style="color:var(--netflix-red)">Because they make up everything! ⚛️</b></div>
+            <div class="netflix-box">What do you call a fake noodle?<br><b style="color:var(--netflix-red)">An impasta! 🍝</b></div>
+            <div class="netflix-box">Why did the computer go to the doctor?<br><b style="color:var(--netflix-red)">It had a virus! 💻</b></div>
+        </div>
+    `);
+}
+
+function games(){
+    setActiveNav("navGames", "mNavGames");
+    page(`
+        <div class="page-container">
+            <h1 class="page-title">🎮 Games & Quizzes</h1>
+            <div class="netflix-box">
+                <h3>❤️ How Much Cherry Loves Diyaa</h3>
+                <p style="color:var(--netflix-text-gray); font-size:0.8rem; margin-top:4px;">Test your romance score with Cherry!</p>
+                <button class="red-btn" style="width:auto; padding:7px 14px; font-size:0.8rem; margin-top:8px;" onclick="startQuiz('loveCherry')">Play Love Quiz</button>
+            </div>
+            <div class="netflix-box">
+                <h3>🤫 Do You Know Me? (Cherry's Quiz)</h3>
+                <p style="color:var(--netflix-text-gray); font-size:0.8rem; margin-top:4px;">Test how well you know Cherry + unlock a secret!</p>
+                <button class="red-btn" style="width:auto; padding:7px 14px; font-size:0.8rem; margin-top:8px;" onclick="startQuiz('aboutMe')">Play Secret Quiz</button>
+            </div>
+            <div class="netflix-box">
+                <h3>❤ Compatibility Match</h3>
+                <p style="color:var(--netflix-text-gray); font-size:0.8rem; margin-top:4px;">Test your vibe score with your partner!</p>
+                <button class="red-btn" style="width:auto; padding:7px 14px; font-size:0.8rem; margin-top:8px;" onclick="startQuiz('compatibility')">Play Now</button>
+            </div>
+        </div>
+    `);
+}
+
+function account(){
+    setActiveNav("", "mNavAccount");
+    const p = profiles[activeProfile];
+    const myHistory = history.filter(x => x.profile === activeProfile);
+
+    page(`
+        <div class="page-container">
+            <h1 class="page-title">👤 Account</h1>
+            <div class="netflix-box" style="display:flex; align-items:center; gap:12px;">
+                <div style="font-size:36px;">${escapeHTML(p.avatar)}</div>
+                <div>
+                    <h2 style="font-size:1.1rem;">${escapeHTML(p.name)}</h2>
+                    <p style="color:var(--netflix-text-gray); font-size:0.8rem;">Partner: ${escapeHTML(p.liked || "Cherryyy")}</p>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin:16px 0 8px;">
+                <h3 style="font-size:1rem;">📊 Quiz History</h3>
+                ${myHistory.length ? `<button class="red-btn cancel" style="width:auto; padding:5px 10px; font-size:0.7rem; margin-top:0;" onclick="clearHistory()">🗑️ Clear History</button>` : ''}
+            </div>
+
+            <div id="historyListBox">
+                ${myHistory.length ? myHistory.map(x => `
+                    <div class="netflix-box" style="border-left:3px solid var(--netflix-red);">
+                        <b>${escapeHTML(x.quiz)}</b>: <span style="color:var(--netflix-red);">${escapeHTML(x.result)}</span>
+                        <div style="font-size:0.68rem; color:#777; margin-top:4px;">${escapeHTML(x.date)}</div>
+                    </div>
+                `).join('') : '<p style="color:#777; font-size:0.85rem;">No quizzes completed yet.</p>'}
+            </div>
+
+            <button class="red-btn" style="width:auto; padding:8px 16px; margin-top:16px; font-size:0.85rem;" onclick="switchProfile()">🔄 Switch Profile</button>
+        </div>
+    `);
+}
+
+function clearHistory(){
+    if(confirm("Are you sure you want to clear your quiz history?")){
+        history = history.filter(x => x.profile !== activeProfile);
+        save();
+        account();
+    }
+}
+
+function switchProfile(){
+    activeProfile = null;
+    document.getElementById("app").classList.add("hidden");
+    document.getElementById("login").classList.remove("hidden");
+    renderProfiles();
+}
+
+function upgrade(){
+    alert("still workingg on itttt, dont worry i'll make it soon ;)");
+}
+
+/* =========================================================
+   QUIZ RENDER & EXECUTION ENGINE
+========================================================= */
+
+function startQuiz(name){
+    quizState = { name, index: 0, answers: [] };
+    renderQuiz();
+}
+
+function renderQuiz(){
+    const q = quizData[quizState.name];
+    page(`
+        <div class="page-container">
+            <div class="quiz-container">
+                <span style="color:var(--netflix-red); font-weight:bold; letter-spacing:1px; font-size:0.65rem;">INTERACTIVE QUIZ</span>
+                <h2 style="margin-top:2px; font-size:1rem;">${q.title}</h2>
+
+                <div class="quiz-progress-bg">
+                    <div id="quizProgress" class="quiz-progress-fill"></div>
+                </div>
+
+                <h1 id="quizQuestion" class="quiz-question"></h1>
+
+                <div id="quizAnswers" class="quiz-answers-grid"></div>
+            </div>
+        </div>
+    `);
+
+    showQuestion();
+}
+
+function showQuestion(){
+    const q = quizData[quizState.name];
+    const i = quizState.index;
+    const currentQ = q.questions[i];
+
+    document.getElementById("quizQuestion").innerText = currentQ.text;
+    document.getElementById("quizProgress").style.width = ((i / q.questions.length) * 100) + "%";
+
+    const box = document.getElementById("quizAnswers");
+    box.innerHTML = "";
+
+    currentQ.answers.forEach((ans, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "quiz-btn";
+        btn.innerText = ans;
+        btn.onclick = () => {
+            // Check if this question has a strict correct index restriction (e.g., Question about talking to jaanuu)
+            if (currentQ.strictIndex !== undefined && idx !== currentQ.strictIndex) {
+                alert("Wrong option! Try again cutie 😉");
+                return; // Do not advance, force her to pick the right answer
+            }
+
+            quizState.answers.push(idx);
+            quizState.index++;
+            if(quizState.index >= q.questions.length){
+                showResult();
+            } else {
+                showQuestion();
+            }
+        };
+        box.appendChild(btn);
+    });
+}
+
+function revealSecret(){
+    const secretBox = document.getElementById("secretRevealArea");
+    if(secretBox){
+        secretBox.innerHTML = `
+            <div class="secret-card">
+                <p style="color:#ffd1d1; font-size:0.9rem; line-height:1.5; margin-bottom:12px;">
+                    Since ur my jaanuuu, and i promised i'll give my snap acc ❤️
+                </p>
+                <div style="background:#141414; padding:10px; border-radius:6px; border:1px solid #333; text-align:left; font-size:0.85rem;">
+                    <div style="color:var(--netflix-text-gray);">Id: <strong style="color:#FFF;">cherrybroing26</strong></div>
+                    <div style="color:var(--netflix-text-gray); margin-top:4px;">Password: <strong style="color:#E50914;">diyamyjaanu</strong></div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+function showResult(){
+    const p = profiles[activeProfile];
+
+    if(quizState.name === "loveCherry"){
+        saveHistory("How Much Cherry Loves Diyaa", "1000% INFINITE LOVE ❤️");
+        page(`
+            <div class="page-container">
+                <div class="result-card">
+                    <div style="font-size:42px;">💖</div>
+                    <div style="color:#E50914; font-weight:bold; font-size:0.8rem; margin-top:4px;">LOVE SCORE RESULT</div>
+                    <div class="result-score" style="font-size:2rem; margin:6px 0;">1000% INFINITE LOVE ❤️</div>
+                    <p style="color:var(--netflix-text-gray); font-size:0.8rem;">Cherry loves Diyaa more than words can ever say. You are his entire world!</p>
+                    <button class="red-btn cancel" style="font-size:0.85rem; margin-top:16px;" onclick="home()">Return to Home</button>
+                </div>
+            </div>
+        `);
+        return;
+    }
+
+    if(quizState.name === "aboutMe"){
+        saveHistory("Do You Know Cherry?", "100% KNOW HIM VERY WELL");
+        page(`
+            <div class="page-container">
+                <div class="result-card">
+                    <div style="font-size:42px;">👑</div>
+                    <div style="color:#46d369; font-weight:bold; font-size:0.8rem; margin-top:4px;">QUIZ COMPLETED</div>
+                    <div class="result-score" style="font-size:2rem; margin:6px 0;">u know him veryy well</div>
+                    <p style="color:var(--netflix-text-gray); font-size:0.8rem;">You aced every single tricky question about Cherry!</p>
+
+                    <button class="red-btn" style="font-size:0.9rem; margin-top:14px;" onclick="revealSecret()">wanna know a secret? 🤫</button>
+                    
+                    <div id="secretRevealArea"></div>
+
+                    <button class="red-btn cancel" style="font-size:0.85rem; margin-top:16px;" onclick="home()">Return to Home</button>
+                </div>
+            </div>
+        `);
+        return;
+    }
+
+    if(quizState.name === "compatibility"){
+        const scores = ["99.96%", "99.97%", "99.98%", "99.99%"];
+        const result = scores[Math.floor(Math.random() * scores.length)];
+        saveHistory("Compatibility Match", result);
+
+        page(`
+            <div class="page-container">
+                <div class="result-card">
+                    <div style="font-size:42px;">❤️</div>
+                    <div class="result-score">${result}</div>
+                    <h2 style="font-size:1.1rem; margin-bottom:4px;">${escapeHTML(p.name)} × ${escapeHTML(p.liked || "Cherryyy")}</h2>
+                    <p style="color:var(--netflix-text-gray); font-size:0.8rem;">Compatibility check complete! Your vibe synergy is 100% matched.</p>
+
+                    <div class="stats-grid">
+                        <div class="stat-box"><span>VIBE MATCH</span><strong>${result}</strong></div>
+                        <div class="stat-box"><span>HUMOUR</span><strong>98%</strong></div>
+                        <div class="stat-box"><span>ENERGY</span><strong>97%</strong></div>
+                    </div>
+
+                    <button class="red-btn cancel" style="font-size:0.85rem; margin-top:12px;" onclick="home()">Return to Home</button>
+                </div>
+            </div>
+        `);
+        return;
+    }
+
+    const types = ["THE CHILL VIBE 😎", "THE CREATIVE 🎨", "THE ADVENTURER 🌎", "THE CHAOTIC ICON 😂"];
+    const resultType = types[Math.floor(Math.random() * types.length)];
+    saveHistory(quizData[quizState.name].title, resultType);
+
+    page(`
+        <div class="page-container">
+            <div class="result-card">
+                <div style="color:var(--netflix-red); font-weight:bold; letter-spacing:1px; font-size:0.7rem;">YOUR RESULT</div>
+                <div class="result-score" style="font-size:1.7rem; margin:12px 0;">${resultType}</div>
+                <button class="red-btn cancel" style="font-size:0.85rem;" onclick="home()">Return to Home</button>
+            </div>
+        </div>
+    `);
+}
+
+function saveHistory(quiz, result){
+    history.push({
+        profile: activeProfile,
+        quiz,
+        result,
+        date: new Date().toLocaleString()
+    });
+    save();
+}
+
+/* INITIALIZE */
+renderProfiles();
+
+</script>
+</body>
+</html>
